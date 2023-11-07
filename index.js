@@ -32,6 +32,7 @@ async function run() {
 
 
         app.get('/allBlogs', async (req, res) => {
+            const user = req.body;
             const result = await Blogs.find().toArray();
             res.send(result);
         });
