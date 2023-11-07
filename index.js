@@ -37,6 +37,11 @@ async function run() {
             const result = await Blogs.find().toArray();
             res.send(result);
         });
+        app.get('/wishlist', async (req, res) => {
+            const user = req.body;
+            const result = await wishlist.find().toArray();
+            res.send(result);
+        });
         app.post('/addBlog', async (req, res) => {
             const user = req.body;
             const result = await Blogs.insertOne(user);
