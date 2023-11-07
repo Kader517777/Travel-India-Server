@@ -26,6 +26,7 @@ async function run() {
         await client.connect();
         const database = client.db("travel_India");
         const Blogs = database.collection("Blogs");
+        const wishlist = database.collection("wishlist");
 
 
 
@@ -40,8 +41,16 @@ async function run() {
             const user = req.body;
             const result = await Blogs.insertOne(user);
             res.send(result);
+        });
+
+        app.post('/wishlist', async (req, res) => {
+            const user = req.body;
+            const result = await wishlist.insertOne(user);
+            res.send(result);
             console.log(user);
         });
+
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
