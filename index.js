@@ -27,6 +27,7 @@ async function run() {
         const database = client.db("travel_India");
         const Blogs = database.collection("Blogs");
         const wishlist = database.collection("wishlist");
+        const comments = database.collection("comments");
 
 
 
@@ -37,10 +38,23 @@ async function run() {
             const result = await Blogs.find().toArray();
             res.send(result);
         });
+        app.get('/allBlogs/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await Blogs.find(query).toArray();
+            res.send(result);
+        });
         app.get('/wishlist', async (req, res) => {
             const user = req.query;
             const query = { email: user?.email };
             const result = await wishlist.find(query).toArray();
+            res.send(result);
+        });
+        // it's blog comment
+        app.get('/comment/:id', async (req, res) => {
+            const blogId = req.params.id;
+            const query = { blog_id: blogId };
+            const result = await comments.find(query).toArray();
             res.send(result);
         });
         app.post('/addBlog', async (req, res) => {
@@ -48,14 +62,17 @@ async function run() {
             const result = await Blogs.insertOne(user);
             res.send(result);
         });
+        app.post('/comment', async (req, res) => {
+            const user = req.body;
+            const result = await comments.insertOne(user);
+            res.send(result);
+        });
 
         app.post('/wishlist/:id', async (req, res) => {
             const id = req.params.id;
             const { currentTime, currentDay, title, imgUrl, category, shortDescription, LongDescription, email } = req.body;
             const user = { _id: id, currentTime, currentDay, title, imgUrl, category, shortDescription, LongDescription, email }
-            console.log(user, id);
             const result = await wishlist.insertOne(user);
-            console.log(result);
             res.send(result);
         });
         app.delete('/:id', async (req, res) => {
