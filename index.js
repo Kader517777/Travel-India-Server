@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = "mongodb+srv://kader2020:enu2zPQPCBnD8bO5@cluster0.m2hfneo.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -38,8 +38,10 @@ async function run() {
             res.send(result);
         });
         app.get('/wishlist', async (req, res) => {
-            const user = req.body;
-            const result = await wishlist.find().toArray();
+            const user = req.query;
+            const query = { email: user?.email };
+            console.log(user);
+            const result = await wishlist.find(query).toArray();
             res.send(result);
         });
         app.post('/addBlog', async (req, res) => {
@@ -52,7 +54,12 @@ async function run() {
             const user = req.body;
             const result = await wishlist.insertOne(user);
             res.send(result);
-            console.log(user);
+        });
+        app.delete('/:id', async (req, res) => {
+            const user = req?.params?.id;
+            const query = { _id: new ObjectId(user) };
+            const result = await wishlist.deleteOne(query);
+            res.send(result);
         });
 
 
