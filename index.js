@@ -40,7 +40,6 @@ async function run() {
         app.get('/wishlist', async (req, res) => {
             const user = req.query;
             const query = { email: user?.email };
-            console.log(user);
             const result = await wishlist.find(query).toArray();
             res.send(result);
         });
@@ -50,14 +49,18 @@ async function run() {
             res.send(result);
         });
 
-        app.post('/wishlist', async (req, res) => {
-            const user = req.body;
+        app.post('/wishlist/:id', async (req, res) => {
+            const id = req.params.id;
+            const { currentTime, currentDay, title, imgUrl, category, shortDescription, LongDescription, email } = req.body;
+            const user = { _id: id, currentTime, currentDay, title, imgUrl, category, shortDescription, LongDescription, email }
+            console.log(user, id);
             const result = await wishlist.insertOne(user);
+            console.log(result);
             res.send(result);
         });
         app.delete('/:id', async (req, res) => {
-            const user = req?.params?.id;
-            const query = { _id: new ObjectId(user) };
+            const id = req?.params?.id;
+            const query = { _id: id };
             const result = await wishlist.deleteOne(query);
             res.send(result);
         });
