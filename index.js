@@ -1,20 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
 const app = express();
 const port = process.env.PORT || 3000;
 
 // middleware
-app.use(cors({
-    origin: [
-        'https://travel-india-8e5eb.web.app',
-        'https://travel-india-8e5eb.firebaseapp.com'
-    ],
-    credentials: true,
-}));
+app.use(cors());
 app.use(express.json());
-app.use(cookieParser())
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -29,21 +20,7 @@ const client = new MongoClient(uri, {
     }
 });
 
-// custom omidlewere
-const twtVerify = async (req, res, next) => {
-    const token = req.cookies?.token;
-    if (!token) {
-        return res.status(402).send({ success: 'unathorized 401' });
-    }
-    jwt.verify(token, 'secret', (err, decoded) => {
-        if (err) {
-            return res.status(401).send({ success: 'unathorized 401' });
-        }
-        req.user = decoded;
-        next();
-    })
 
-}
 
 
 
@@ -131,21 +108,7 @@ async function run() {
             res.send(result);
         })
 
-        // token
-        app.post('/jwt', async (req, res) => {
-            user = req.body;
-            // const user = { email: "car@doc.com" }
-            const token = await jwt.sign(user, 'secret', { expiresIn: '1h' })
-            res
-                .cookie('token', token,
-                    {
-                        httpOnly: true,
-                        secure: false,
-                        sameSite: true,
-                    },
-                )
-                .send({ success: true })
-        })
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
